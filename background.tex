@@ -1,0 +1,110 @@
+\section{Background}
+\label{sec:background}
+\newtheorem{defi}{Definition}
+
+
+In this section, we first present a generic view of LBA. We later discuss some background concepts in location privacy and provide a brief overview of PIR. Similar to other location privacy schemes \cite{Spiral, No_Need_Anonymizer, Space_Transformation}, our goal is to protect user's location and identity information. In order to achieve these privacy measures, we place trust in a Secure Coprocessor \cite{PIR_SC_Origin}, which is a trusted tamper-proof hardware residing on the untrusted server, receiving queries from users and privately retrieving appropriate records to answer such queries. 
+
+
+\subsection{Location Based Advertising}
+Location-based advertising is a relatively new model compared to other types of advertising. LBA can be considered as a combination of \textit{mobile advertising}\footnote{$http://en.wikipedia.org/wiki/Mobile\_advertising$}, which is a form of advertising via mobile phones or devices, and \textit{location-based service}\footnote{$http://en.wikipedia.org/wiki/Location-based\_service$}, which is a class of services whose features are significantly controlled by location data. The basic principle behind LBA is to use technology to locate consumers' position and use that location information to serve them with appropriate location-specific advertisements on their mobile phones or devices.
+
+Location-based services can generally be classified into two types, which are \textit{push} and \textit{pull}. In push approach, service providers target and offer services to consumers without any specific request from them. In other approach, users explicitly issue requests, by entering a keyword into a search box of a certain application for example, and services are only served upon those requests. Since LBA is also relevant to mobile advertising, we also list here its main categories; i.e. \textit{messaging}, \textit{display}, \textit{search}, \textit{product placement}.
+
+In this work, we focus on a very popular scheme of LBA which leverages \textit{push location-based service} to offer \textit{display mobile advertising}. This LBA model involves several parties each of which serves a separate role. For simplicity, we informally define the four main parties participating in the service
+\begin{itemize}
+\item $Advertiser$: This party often comprises of businesses and marketers that want to advertise their products to customers who are within the products' proximity. Advertiser is the one who pays LBAS to get their ads delivered to customer. LBAS, in turn, pays Application Publisher to display ads that it collected from Advertisers on their apps. We refer to such mobile applications as ads-sponsored or ads-funded apps.
+\item $LBAS$: This party serves the role of a broker who collects ads from Advertisers and then delivers them to mobile applications of customers in the ads' proximity.
+\item \textit{Application Publisher}: This party mostly includes mobile developers who distribute mobile applications to users free of charge and then gain benefit from Advertisers by displaying ads on their apps.
+\item $User / Consumer$: This party represents advertisers' main target. Users install ad-sponsored applications on their mobile devices so that ads can be displayed on their devices during their usage.
+\end{itemize}
+
+Application Publishers who want to cooperate with LBAS include in their mobile applications a connection to LBAS. Using this connection, the mobile application can communicate with LBAS to fetch ads. 
+LBAS should have access to both locations of ads and customers so that it can send to customers their close by ads. This information obtaining is problematic in privacy perspective. We consider LBAS as an untrusted party and thus, user's location should not be revealed to LBAS. In this work, we propose a mechanism to offer LBA in such a way that the untrusted LBAS can learn nothing about user's location.
+%We refer to this mechanism as \textit{server pushing mode}. 
+
+
+
+% Problem Definition: Define the problem, schemes, threads and assumptions
+\subsection{Location Privacy Preliminaries}
+\paragraph{Privacy Metrics}
+Assume that an untrusted  LBAS hosts an ads database $ADB = \{ad_1, ad_2, ad_3, ..., ad_n\}$, in which $ad_i$ is a set of ads relevant to point of interest (POI) $l_i$ and that a set of users $U$=\{$u_1$, $u_2$, $u_3$,....,$u_m$\} subscribe to S's services, our target is to enable users to privately retrieve ads in such a way that no sensitive location or identity information is disclosed to the untrusted LBAS. We consider an ads-retrieval as a spatial query issued by the user and the answers for such queries are appropriate ads. We adopt privacy metrics defined in \cite{Spiral} in our work.
+
+\newtheorem{u-anonymity}[defi]{Definition}
+\begin{u-anonymity}
+[u-anonymity] 
+Given a query, with respect to the server's knowledge, the user who issues the query should be indistinguishable among the entire set of users. That is, for every query $q$, the probability $P_q(u_j)$ that user $u_j$ issues query $q$ is the same for every user, i.e.
+$P_q(u_j) = \frac{1}{m}$ where m is the total number of users
+\end{u-anonymity}
+
+The above definition is to ensure the unstruted LBAS is blinded from the information of who issues the query. In addition, we also need to hide the location from which the query is issued.
+
+\newtheorem{a-anonymity}[defi]{Definition}
+\begin{a-anonymity}
+[a-anonymity] 
+The location at which the query is issued should be kept secret. That is, for every query $q$, with respect to the server's knowledge, the probability $P'_q(l)$ that the query $q$ is issued at location $l$ is the same for every location, i.e.  $P'_q(l) = \frac{1}{area(A)}$ where A is the entire region covering all POIs.
+\end{a-anonymity}
+
+We argue that privacy measures implemented by the two above definitions are much stronger than metrics used in other $Anonymity$ approaches \cite{k-anonymity1, k-anonymity2, New_Casper}. In such notions, a user is only indistinguishable among a small set of k-1 other users or her location is hidden in a small region R. In fact, the privacy requirements of Definitions 1 and 2 stimulate an extreme case of other $Anonymity$ approaches where $k=m$ (a user is indistinguishable among $all$ users) and $R=A$ (user location is blurred into the $entire$ region). 
+
+While \textit{a-anonymity} and \textit{u-anonymity} can guarantee the privacy of the query in snapshot, they still reveal the access frequency, which allows the untrusted server to carry out correlation attack\cite{Spiral}. To prevent this, LBAS should obtain no information about which item is retrieved from it per each request. Thus, we propose that a query should be evaluated in a data-oblivious way. We use the similar definition of data obliviousness as defined in \cite{ORAM}
+
+\newtheorem{obliviousness}[defi]{Definition}
+\begin{obliviousness}
+[Data-oblivious Execution] 
+An execution is considered data-oblivious if it has the equivalent sequence of operations and memory accesses for any two inputs with the same running time.
+\end{obliviousness}
+
+
+\paragraph{Thread model}
+The purpose of an adversary is to learn users' location. We assume the most powerful adversary, who pretends to be a normal user and together with the untrusted LBAS conspire against the user. Note that the LBAS can plays an adversary by self-issuing queries and observing records' access pattern to find the correspondence between user's location and records hosted on it.
+
+\subsection{Private Information Retrieval}
+\label{backgroundPIR}
+In PIR setting, a database is modeled as a n-bit string $X$ = \{$X_1$, $X_2$, $X_3$, ..., $X_n$\} hosted on an untrusted server $S$, and the user is interested in retrieve the $i^{th}$ bit in $X$, which is $X_i$, without revealing the value of $i$. A broad range of PIR schemes can be classified into cryptographic and hardware-based approaches. 
+
+\paragraph{Cryptographic PIR}
+The original PIR scheme is proposed in an information-theoretical setting where it is assumed that even an adversary with infinite computational power cannot find out the value of $i$. However, it is proven that in theoretical PIR setting, the communication cost is equivalent to the size of the entire database. Thus, in order to reduce such an overhead, several computational PIR approaches only try to ensure that computationally bounded adversary cannot find $i$ within polynomial time \cite{computational_PIR}. Even though they can mitigate the huge communication cost, they still have to perform a linear scan of the entire database. Despite being able to achieve perfect secrecy of the item retrieval, this class of PIR suffers from a prohibitive communication and computation cost, which makes its less practical in real applications.
+
+\paragraph{Hardware-based PIR}
+In order to obtain strong privacy without suffering from high costs, a class of Hardware-based PIR has been proposed \cite{PIR_SC_2002, PIR_SC_2004, PIR_SC_2006}. These approaches assume that there is a tamper-resistant hardware device installed on the untrusted server (which is the LBAS in our case). Such a device, in several cases referred to as \textit{Secure Corocessor (SC)}, is equipped with hardware cryptographic accelerators that are able to execute fast and efficiently cryptographic operations.
+Hardware-based PIR approaches trust the $SC$  to privately perform information retrievals. By placing trust on the SC, these techniques are able to achieve optimal communication and computation costs in comparison with cryptographic PIR approaches. Because of this very advantage, we employ this class of PIR approaches to build our privacy-aware $LBA$ system. 
+
+
+
+
+\subsection{Homomorphic Encryption}
+In this work, we also utilize basic additive homomorphic encryption to carry out the accounting. Additive homomorphic encryption system is an asymmetric cryptosystem that allows addition operation to be performed on ciphertexts and gives an encrypted result. The decryption of such a encrypted result gives a value which matches the result of an addition carried out on plaintexts. In details, each plaintext $x$ is encrypted using a public key $pk$. Given a public key $pk$, anyone can calculate the sum of $E(pk, x_1)$ and $E(pk, x_2)$, to generate a result which is $E(pk, x_1 + x_2)$. This result, when decrypted with a secret key $sk$ corresponding to $pk$, will render the plaintext $x_1 + x_2$. Note that in performing an addition of $E(pk, x_1)$ and $E(pk, x_2)$ using $pk$, no information on $x_1$ and $x_2$ is revealed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

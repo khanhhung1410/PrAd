@@ -1,0 +1,74 @@
+\documentclass{sig-alternate}
+%{sig-alternate-2013}
+%\pdfpagewidth 8.5in
+%\pdfpageheight 11.0in
+%\usepackage{showframe}
+\usepackage{formatting/shortcuts}
+\usepackage{formatting/code}
+\usepackage{formatting/mathpartir}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{times}
+\usepackage{epstopdf}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{xspace}
+\usepackage{mdwlist}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{balance}
+\usepackage{flushend}
+\usepackage{amsmath}
+\usepackage[]{algorithm2e}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{datetime}
+
+%\newfont{\mycrnotice}{ptmr8t at 7pt}
+%% \newfont{\myconfname}{ptmri8t at 7pt}
+%% \let\crnotice\mycrnotice%
+%% \let\confname\myconfname%
+%% \hyphenation{sche-mes}
+
+\begin{document}\sloppy
+\title{PrAd: Enabling Privacy-Aware Location based Advertising}
+%\numberofauthors{1}
+%\author{
+%\alignauthor Hung Dang\\
+%       \affaddr{School of Computing}\\
+%       \affaddr{National University of Singapore}\\
+%       \affaddr{Singapore 117417}\\
+%       \email{hungdang@u.nus.edu}
+%}
+\date{The date}
+\maketitle
+\setlength{\abovecaptionskip}{0.2cm}
+\setlength{\belowcaptionskip}{-0.2cm}
+\setlength{\belowdisplayskip}{-0.2cm}
+\renewcommand{\baselinestretch}{1.5}
+\setlength{\parskip}{0.2cm plus1mm minus1mm}
+
+\input{abstract}
+\input{intro}
+
+\input{background}
+
+
+\input{Solutions}
+
+
+
+\input{evaluation}
+\input{related_work}
+\input{conclusion}
+
+
+
+%\bibliographystyle{abbrv}
+\bibliographystyle{IEEEtran}
+%\vspace{-0.2cm}
+\bibliography{paper}
+
+\end{document}
